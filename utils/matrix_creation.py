@@ -1,44 +1,65 @@
-from data_loader import load_ratings, load_users, load_movies
- 
 
-## function to create user-movie matrix 
-def create_user_movie_matrix(ratings, users, movies):
-    """
-    Create a user-movie matrix from the ratings, users, and movies dataframes.
+import pandas as pd
 
-    Parameters:
-    ratings (pd.DataFrame): DataFrame containing user ratings.
-    users (pd.DataFrame): DataFrame containing user information.
-    movies (pd.DataFrame): DataFrame containing movie information.
+from data_loader import load_ratings
+from data_split import split_data
+from pathlib import Path
 
-    Returns:
-    pd.DataFrame: A user-movie matrix with users as rows and movies as columns.
-    """
-    # Merge ratings with users and movies to get complete information
-    merged_data = ratings.merge(users, on='UserID').merge(movies, on='MovieID')
+output_dir = Path("processed")
+output_dir.mkdir(exist_ok=True) 
 
-    # Create the user-movie matrix using pivot_table
-    user_movie_matrix = merged_data.pivot_table(index='UserID', columns='MovieID', values='Rating')
 
-    return user_movie_matrix
+def create_user_movie_matrix(ratings, all_users, all_movies):
+    matrix = ratings.pivot_table(
+        index="UserID",
+        columns="MovieID",
+        values="Rating"
+    )
+
+    # Keep all users and movies from the original dataset
+    matrix = matrix.reindex(
+        index=all_users,
+        columns=all_movies
+    )
+
+    return matrix
+
+
+def normalize_user_matrix(matrix):
+    # Calculate each user's average using training ratings
+    user_means = matrix.mean(axis=1)
+
+    # Center ratings around each user's average
+    normalized_matrix = matrix.sub(user_means, axis=0)
+
+    # Missing ratings become zero deviation, not zero ratings
+    normalized_matrix = normalized_matrix.fillna(0)
+
+    return normalized_matrix
 
 
 if __name__ == "__main__":
-
-    # Load the data
     ratings = load_ratings()
-    users = load_users()
-    movies = load_movies()
 
-    # Create the user-movie matrix
-    user_movie_matrix = create_user_movie_matrix(ratings, users, movies)
-    total_cells = user_movie_matrix.size
+    train_data, test_data = split_data(ratings)
 
-    missing_cells = user_movie_matrix.isna().sum().sum()
-    
-    sparsity = (missing_cells / total_cells) * 100
-    
-    print("Sparsity:", sparsity, "%")
+    all_users = sorted(ratings["UserID"].unique())
+    all_movies = sorted(ratings["MovieID"].unique())
 
-    # Display the user-movie matrix
-    print(user_movie_matrix.shape)
+    user_movie_matrix = create_user_movie_matrix(
+        train_data, all_users, all_movies
+    )
+
+    normalized_matrix = normalize_user_matrix(user_movie_matrix)
+
+    print("Original matrix shape:", user_movie_matrix.shape)
+    print("Normalized matrix shape:", normalized_matrix.shape)
+
+    print("Training sparsity:",
+          user_movie_matrix.isna().sum().sum()
+          / user_movie_matrix.size * 100)
+
+    # Save compact normalized matrix
+    normalized_matrix.astype("float32").round(4).to_csv(
+        "processed/user_item_matrix.csv"
+    )

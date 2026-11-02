@@ -66,3 +66,10 @@ flowchart TD
 
     N --> O[Generate Recommendations]
 ```
+
+## Preparing the user-item matrix
+
+Run `python -m utils.matrix_creation` from the repository root to load the
+MovieLens data, remove rows with null values, and create the user-item ratings
+matrix. Missing user-movie ratings are represented as `0` in the resulting
+matrix, which is saved to `processed/user_item_matrix.csv`.
