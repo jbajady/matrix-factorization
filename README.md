@@ -69,7 +69,11 @@ flowchart TD
 
 ## Preparing the user-item matrix
 
-Run `python -m utils.matrix_creation` from the repository root to load the
-MovieLens data, remove rows with null values, and create the user-item ratings
-matrix. Missing user-movie ratings are represented as `0` in the resulting
-matrix, which is saved to `processed/user_item_matrix.csv`.
+Run `python utils/matrix_creation.py` from the repository root to load the
+MovieLens data, split ratings into training and test sets, and create a
+user-item matrix from the training ratings. The matrix is centered by each
+user's mean rating, and missing ratings are represented as `0` after
+normalization. The result is saved to `processed/user_item_matrix.csv`.
+
+See the [project documentation](doc/README.md) for setup instructions,
+repository structure, data details, and the current workflow.

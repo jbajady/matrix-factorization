@@ -1,8 +1,10 @@
+
 import pandas as pd
 from pathlib import Path
 
 ## declartion of envirment
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR_CSV = Path(__file__).resolve().parent.parent / "processed"
 
 
 ## functions to load data 
@@ -29,12 +31,15 @@ def load_movies():
      encoding='latin-1')
 
 
+def load_matrix():
+    return pd.read_csv(DATA_DIR_CSV / "user_item_matrix.csv", index_col="UserID")
 
 
 if __name__ == "__main__":
     ratings = load_ratings()
     users = load_users()
     movies = load_movies()
+    matrix = load_matrix()
 
 
     print(ratings.head())

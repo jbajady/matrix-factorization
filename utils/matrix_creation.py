@@ -1,6 +1,4 @@
 
-import pandas as pd
-
 from data_loader import load_ratings
 from data_split import split_data
 from pathlib import Path
