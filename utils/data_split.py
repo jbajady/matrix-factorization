@@ -1,5 +1,9 @@
 from sklearn.model_selection import train_test_split
-from data_loader import load_ratings
+
+try:
+    from .data_loader import load_ratings
+except ImportError:
+    from data_loader import load_ratings
 
 
 def split_data(ratings):

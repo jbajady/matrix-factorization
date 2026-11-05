@@ -1,10 +1,17 @@
 
-from data_loader import load_ratings
-from data_split import split_data
 from pathlib import Path
 
-output_dir = Path("processed")
-output_dir.mkdir(exist_ok=True) 
+import pandas as pd
+
+if __package__:
+    from .data_loader import load_ratings
+    from .data_split import split_data
+else:
+    from data_loader import load_ratings
+    from data_split import split_data
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_PATH = PROJECT_ROOT / "processed" / "user_item_matrix.csv"
 
 
 def create_user_movie_matrix(ratings, all_users, all_movies):
@@ -24,6 +31,11 @@ def create_user_movie_matrix(ratings, all_users, all_movies):
 
 
 def normalize_user_matrix(matrix):
+    normalized_matrix, _ = center_user_matrix(matrix)
+    return normalized_matrix
+
+
+def center_user_matrix(matrix):
     # Calculate each user's average using training ratings
     user_means = matrix.mean(axis=1)
 
@@ -33,11 +45,17 @@ def normalize_user_matrix(matrix):
     # Missing ratings become zero deviation, not zero ratings
     normalized_matrix = normalized_matrix.fillna(0)
 
-    return normalized_matrix
+    return normalized_matrix, user_means
 
 
-if __name__ == "__main__":
-    ratings = load_ratings()
+def prepare_matrix_data(ratings=None):
+    """Create the shared centered train matrix and reproducible test split."""
+    if ratings is None:
+        ratings = load_ratings()
+
+    required_columns = ["UserID", "MovieID", "Rating"]
+    if ratings.empty or ratings[required_columns].isna().any().any():
+        raise ValueError("Ratings must be non-empty and have no missing IDs or ratings")
 
     train_data, test_data = split_data(ratings)
 
@@ -48,16 +66,21 @@ if __name__ == "__main__":
         train_data, all_users, all_movies
     )
 
-    normalized_matrix = normalize_user_matrix(user_movie_matrix)
+    normalized_matrix, user_means = center_user_matrix(user_movie_matrix)
+    return normalized_matrix, user_means, train_data, test_data
 
-    print("Original matrix shape:", user_movie_matrix.shape)
+
+def save_user_item_matrix(matrix):
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    matrix.astype("float32").round(4).to_csv(OUTPUT_PATH)
+
+
+if __name__ == "__main__":
+    normalized_matrix, _, train_data, _ = prepare_matrix_data()
+
     print("Normalized matrix shape:", normalized_matrix.shape)
-
-    print("Training sparsity:",
-          user_movie_matrix.isna().sum().sum()
-          / user_movie_matrix.size * 100)
+    print(f"Training ratings: {len(train_data)}")
 
     # Save compact normalized matrix
-    normalized_matrix.astype("float32").round(4).to_csv(
-        "processed/user_item_matrix.csv"
-    )
+    save_user_item_matrix(normalized_matrix)
+    print(f"Saved matrix to {OUTPUT_PATH}")

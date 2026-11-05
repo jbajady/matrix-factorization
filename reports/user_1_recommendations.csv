@@ -1,0 +1,21 @@
+Model,MovieID,Title,Genres,PredictedRating
+SVD,356,Forrest Gump (1994),Comedy|Romance|War,4.328598
+SVD,110,Braveheart (1995),Action|Drama|War,4.282017
+SVD,590,Dances with Wolves (1990),Adventure|Drama|Western,4.273223
+SVD,1387,Jaws (1975),Action|Horror,4.262979
+SVD,1242,Glory (1989),Action|Drama|War,4.2597756
+SVD,1704,Good Will Hunting (1997),Drama,4.247213
+SVD,2706,American Pie (1999),Comedy,4.244762
+SVD,1265,Groundhog Day (1993),Comedy|Romance,4.2435036
+SVD,480,Jurassic Park (1993),Action|Adventure|Sci-Fi,4.2433825
+SVD,1213,GoodFellas (1990),Crime|Drama,4.2415533
+PMF,2239,Swept Away (Travolti da un insolito destino nell'azzurro mare d'Agosto) (1975),Comedy|Drama,4.7600837
+PMF,1012,Old Yeller (1957),Children's|Drama,4.720558
+PMF,1387,Jaws (1975),Action|Horror,4.713094
+PMF,1014,Pollyanna (1960),Children's|Comedy|Drama,4.702212
+PMF,1380,Grease (1978),Comedy|Musical|Romance,4.690281
+PMF,1008,"Davy Crockett, King of the Wild Frontier (1955)",Western,4.6865206
+PMF,920,Gone with the Wind (1939),Drama|Romance|War,4.6854315
+PMF,2660,"Thing From Another World, The (1951)",Sci-Fi,4.6256223
+PMF,1954,Rocky (1976),Action|Drama,4.617239
+PMF,1024,"Three Caballeros, The (1945)",Animation|Children's|Musical,4.6143265
