@@ -7,8 +7,11 @@ Matrix Factorization is a technique used in recommendation systems to discover h
 In a movie recommendation system, we start with a **User-Item Rating Matrix**:
 
 - Rows represent users.
+
 - Columns represent movies.
+
 - Values represent ratings given by users.
+
 - Missing values represent movies that users have not rated.
 
 The objective is to predict missing ratings and recommend movies that users are likely to enjoy.
@@ -16,6 +19,7 @@ The objective is to predict missing ratings and recommend movies that users are 
 This project explores two matrix factorization approaches:
 
 1. Singular Value Decomposition (SVD)
+
 2. Probabilistic Matrix Factorization (PMF)
 
 Both approaches learn lower-dimensional representations of users and movies, called **latent factors**.
@@ -28,16 +32,16 @@ Both approaches learn lower-dimensional representations of users and movies, cal
 
 Singular Value Decomposition is a mathematical technique that decomposes a matrix into three smaller matrix components.
 
-Given a rating matrix \(R\):
-
-\[
+Given a rating matrix $R$:
+$$
 R = U \Sigma V^T
-\]
-
+$$
 Where:
 
 - **U (User Matrix):** Represents users in a latent-factor space.
+
 - **Σ (Singular Values):** Contains the importance of each latent dimension.
+
 - **Vᵀ (Movie Matrix):** Represents movies in the same latent-factor space.
 
 The decomposition allows us to represent the original matrix using a smaller number of dimensions.
@@ -60,19 +64,19 @@ A larger singular value indicates a direction that contributes more to represent
 
 **Step 3: Select the number of latent factors (k)**
 
-Instead of keeping every singular value, we select the top \(k\) largest singular values.
+Instead of keeping every singular value, we select the top $k$ largest singular values.
 
 This produces a reduced representation:
-
-\[
+$$
 R \approx U_k \Sigma_k V_k^T
-\]
-
+$$
 Where:
 
-- \(U_k\) contains the first \(k\) columns of U.
-- \(\Sigma_k\) contains the \(k\) largest singular values.
-- \(V_k^T\) contains the first \(k\) rows of Vᵀ.
+- $U_k$ contains the first $k$ columns of U.
+
+- $\Sigma_k$ contains the $k$ largest singular values.
+
+- $V_k^T$ contains the first $k$ rows of Vᵀ.
 
 **Step 4: Reconstruct the approximate matrix**
 
@@ -82,17 +86,19 @@ This approximation captures the most important patterns while reducing dimension
 
 ## 2.3 Understanding the parameter k
 
-The parameter \(k\) controls the number of latent dimensions retained by the model.
+The parameter $k$ controls the number of latent dimensions retained by the model.
 
 For example:
 
-- \(k = 10\): Retains 10 latent dimensions.
-- \(k = 50\): Retains 50 latent dimensions.
-- \(k = 100\): Retains 100 latent dimensions.
+- $k = 10$: Retains 10 latent dimensions.
 
-A smaller \(k\) reduces memory usage and computation but may lose important information.
+- $k = 50$: Retains 50 latent dimensions.
 
-A larger \(k\) retains more information but increases computational cost and may capture noise.
+- $k = 100$: Retains 100 latent dimensions.
+
+A smaller $k$ reduces memory usage and computation but may lose important information.
+
+A larger $k$ retains more information but increases computational cost and may capture noise.
 
 The optimal value should be selected through validation experiments.
 
@@ -101,15 +107,15 @@ The optimal value should be selected through validation experiments.
 Once the matrix has been decomposed, we can approximate a user's rating for a movie.
 
 The predicted rating is:
-
-\[
+$$
 \hat r_{ui} = p_u^T q_i
-\]
-
+$$
 Where:
 
-- \(p_u\) represents the user latent vector.
-- \(q_i\) represents the movie latent vector.
+- $p_u$ represents the user latent vector.
+
+- $q_i$ represents the movie latent vector.
+
 - The dot product estimates the user's preference for that movie.
 
 Movies with higher predicted ratings can be recommended to the user.
@@ -129,7 +135,9 @@ Therefore, missing-rating handling must be considered carefully when applying SV
 Possible approaches include:
 
 - Filling missing values using a suitable baseline or imputation strategy.
+
 - Using an appropriate sparse or incomplete-matrix factorization method.
+
 - Using a missing-data-aware matrix factorization approach.
 
 ---
@@ -143,17 +151,16 @@ Probabilistic Matrix Factorization is a machine learning approach that learns la
 Unlike a conventional SVD decomposition, PMF directly learns user and movie latent vectors by optimizing a probabilistic model.
 
 The rating matrix is approximated by:
-
-\[
+$$
 R \approx P Q^T
-\]
-
+$$
 Where:
 
 - **P:** User latent-factor matrix.
+
 - **Q:** Movie latent-factor matrix.
 
-Each user and each movie is represented by a vector of \(k\) latent factors.
+Each user and each movie is represented by a vector of $k$ latent factors.
 
 ## 3.2 How does PMF work?
 
@@ -161,50 +168,38 @@ Each user and each movie is represented by a vector of \(k\) latent factors.
 
 PMF creates initial latent vectors for users and movies.
 
-For example, if \(k = 2\):
-
-\[
+For example, if $k = 2$:
+$$
 p_u = [0.8, 0.3]
-\]
-
-\[
+$$
+$$
 q_i = [0.5, 0.7]
-\]
-
+$$
 These values are initially learned from the training process rather than manually assigned.
 
 **Step 2: Predict ratings**
 
 PMF calculates the predicted rating using the dot product:
-
-\[
+$$
 \hat r_{ui} = p_u^T q_i
-\]
-
+$$
 For example:
-
-\[
+$$
 \hat r_{ui} = (0.8 \times 0.5) + (0.3 \times 0.7)
-\]
-
-\[
+$$
+$$
 \hat r_{ui} = 0.61
-\]
-
+$$
 **Step 3: Calculate prediction error**
 
 The predicted rating is compared with the actual observed rating.
-
-\[
+$$
 e_{ui} = r_{ui} - \hat r_{ui}
-\]
-
+$$
 For example, if the actual rating is 5 and the prediction is 4:
-
-\[
+$$
 e_{ui} = 5 - 4 = 1
-\]
-
+$$
 **Step 4: Update latent factors**
 
 PMF uses optimization techniques such as Gradient Descent or Stochastic Gradient Descent (SGD) to update user and movie vectors.
@@ -222,31 +217,37 @@ Over time, the learned latent vectors become better at predicting user preferenc
 PMF assumes that observed ratings can be modeled probabilistically.
 
 A common formulation assumes Gaussian observation noise:
-
-\[
+$$
 p(R \mid P,Q,\sigma^2)
-=
-\prod_{(u,i)\in\Omega}
-\mathcal{N}
-\left(
-r_{ui}\mid p_u^Tq_i,\sigma^2
-\right)
-\]
 
+=
+
+\prod_{(u,i)\in\Omega}
+
+\mathcal{N}
+
+\left(
+
+r_{ui}\mid p_u^Tq_i,\sigma^2
+
+\right)
+$$
 Where:
 
-- \(\Omega\) is the set of observed user-item ratings.
-- \(\sigma^2\) represents the observation noise variance.
-- \(\mathcal{N}\) is the Gaussian probability distribution.
+- $\Omega$ is the set of observed user-item ratings.
+
+- $\sigma^2$ represents the observation noise variance.
+
+- $\mathcal{N}$ is the Gaussian probability distribution.
 
 PMF also commonly places Gaussian priors on user and movie latent factors.
 
 These priors encourage reasonable factor values and help prevent overfitting.
 
 The resulting optimization objective is commonly expressed as:
-
-\[
-\mathcal{L} =
+$$
+\mathcal{L}
+=
 \frac{1}{2}
 \sum_{(u,i)\in\Omega}
 (r_{ui}-p_u^Tq_i)^2
@@ -254,8 +255,7 @@ The resulting optimization objective is commonly expressed as:
 \frac{\lambda_P}{2}\sum_u \|p_u\|^2
 +
 \frac{\lambda_Q}{2}\sum_i \|q_i\|^2
-\]
-
+$$
 The first term measures prediction error.
 
 The other terms are regularization penalties that prevent latent factors from becoming excessively large.
@@ -275,14 +275,23 @@ This makes PMF suitable for sparse recommendation datasets such as MovieLens.
 # 4. SVD vs PMF
 
 | Feature | SVD | PMF |
+
 |---|---|---|
+
 | Main approach | Mathematical decomposition | Probabilistic learning |
+
 | Main components | U, Σ, Vᵀ | P, Q |
+
 | Learning mechanism | Matrix decomposition | Optimization |
+
 | Latent factors | Extracted through decomposition | Learned through training |
+
 | Missing ratings | Requires careful handling in conventional SVD | Uses observed ratings directly |
+
 | Optimization | Depends on the SVD algorithm | Commonly uses SGD or related methods |
+
 | Main parameter | Number of components (k) | Number of factors (k) |
+
 | Regularization | Depends on the implementation | Commonly included |
 
 ## 4.1 Main conceptual difference
@@ -304,16 +313,19 @@ The goal is to measure how accurately each model predicts unseen ratings.
 ## 5.1 Root Mean Squared Error (RMSE)
 
 RMSE measures the average magnitude of prediction errors, with larger errors penalized more heavily.
-
-\[
+$$
 RMSE =
-\sqrt{
-\frac{1}{N}
-\sum_{j=1}^{N}
-(r_j-\hat r_j)^2
-}
-\]
 
+\sqrt{
+
+\frac{1}{N}
+
+\sum_{j=1}^{N}
+
+(r_j-\hat r_j)^2
+
+}
+$$
 A lower RMSE indicates better rating prediction accuracy.
 
 ## 5.2 Comparing different values of k
@@ -322,14 +334,17 @@ We can train models using different latent-factor counts.
 
 For example:
 
-- \(k = 10\)
-- \(k = 20\)
-- \(k = 50\)
-- \(k = 100\)
+- $k = 10$
+
+- $k = 20$
+
+- $k = 50$
+
+- $k = 100$
 
 The models can then be compared using validation RMSE.
 
-The best value of \(k\) should balance prediction quality and computational efficiency.
+The best value of $k$ should balance prediction quality and computational efficiency.
 
 ## 5.3 Recommendation quality
 
@@ -340,8 +355,11 @@ A recommendation system should also be evaluated based on whether it recommends 
 Additional evaluation metrics may include:
 
 - Precision@K
+
 - Recall@K
+
 - MAP@K
+
 - NDCG@K
 
 These metrics measure the quality and ranking of recommended items.
