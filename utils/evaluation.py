@@ -8,7 +8,7 @@ def evaluate_rmse(
     user_ids: np.ndarray,
     movie_ids: np.ndarray,
 ) -> float:
-    """Calculate RMSE for the observed user/movie pairs in a test split."""
+    """Calculate RMSE for observed user/movie pairs in a test split."""
     user_positions = {user_id: position for position, user_id in enumerate(user_ids)}
     movie_positions = {movie_id: position for position, movie_id in enumerate(movie_ids)}
 

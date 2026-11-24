@@ -83,4 +83,5 @@ if __name__ == "__main__":
 
     # Save compact normalized matrix
     save_user_item_matrix(normalized_matrix)
+    print("matrix head:\n", normalized_matrix.head())
     print(f"Saved matrix to {OUTPUT_PATH}")

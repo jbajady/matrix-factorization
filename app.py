@@ -59,15 +59,18 @@ def main():
         st.error("No users were found in the ratings data.")
         return
 
-    selected_user = st.number_input(
+    selected_user = st.text_input(
         "User ID",
-        min_value=int(user_ids[0]),
-        max_value=int(user_ids[-1]),
-        value=int(user_ids[0]),
-        step=1,
-        help=f"Choose a MovieLens user ID between {user_ids[0]} and {user_ids[-1]}.",
+        value=str(user_ids[0]),
+        help=f"Enter an existing MovieLens user ID (for example, {user_ids[0]}).",
     )
     top_n = st.slider("Recommendations per model", min_value=5, max_value=20, value=10)
+
+    try:
+        selected_user = int(selected_user)
+    except (TypeError, ValueError):
+        st.error("Please enter a valid integer User ID.")
+        return
 
     user_history = ratings.loc[ratings["UserID"] == selected_user]
     if user_history.empty:
